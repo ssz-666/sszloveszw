@@ -10,7 +10,6 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@200;300;400;600&family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
@@ -200,10 +199,6 @@
     .spinner { width: 40px; height: 40px; border: 2px solid rgba(255,255,255,0.1); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* 书本样式 */
-    .paper-page { background-color: #f5f5f0 !important; color: #1a1a1a; padding: 40px; border-left: 2px solid #e5e5e5; }
-    .novel-paragraph { text-indent: 2em; line-height: 1.8; margin-bottom: 1em; font-family: "Noto Serif SC", serif; }
-
     /* 输入框重置 */
     input, textarea { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; }
     input:focus, textarea:focus { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
@@ -313,18 +308,18 @@
 
         <div class="grid grid-cols-2 md:grid-cols-12 gap-6" id="cards-container">
             
-            <!-- 小说 -->
-            <div onclick="openNovelModal()" class="col-span-2 md:col-span-4 spotlight-card h-64 p-8 flex flex-col justify-between cursor-pointer group">
+            <!-- 专属摄影师 (替换了原来的小说/异世界探险) -->
+            <div onclick="openPhotoModal()" class="col-span-2 md:col-span-4 spotlight-card h-64 p-8 flex flex-col justify-between cursor-pointer group">
                 <div class="flex justify-between items-start z-10">
-                    <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-xl group-hover:scale-110 transition-transform">
-                        <i class="fas fa-book-open"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 text-xl group-hover:scale-110 transition-transform">
+                        <i class="fas fa-camera"></i>
                     </div>
                     <i class="fas fa-arrow-right text-gray-600 group-hover:text-white -rotate-45 group-hover:rotate-0 transition-all duration-300"></i>
                 </div>
                 <div class="z-10 relative">
-                    <h3 class="font-bold text-gray-100 text-xl group-hover:text-purple-300 transition-colors">异世界探险</h3>
-                    <p class="text-xs text-gray-500 mt-1">Shared Library + AI Stories</p>
-                    <p class="text-3xl font-bold text-white mt-4 font-display" id="novel-count">0</p>
+                    <h3 class="font-bold text-gray-100 text-xl group-hover:text-teal-300 transition-colors">专属摄影师</h3>
+                    <p class="text-xs text-gray-500 mt-1">AI Composition Guide</p>
+                    <p class="text-sm font-bold text-gray-400 mt-4 font-display">辅助构图</p>
                 </div>
             </div>
 
@@ -388,7 +383,7 @@
                 </div>
             </div>
 
-            <!-- 新增: 恋爱星运 (4列) -->
+            <!-- 恋爱星运 (4列) -->
             <div onclick="openHoroscopeModal()" class="col-span-2 md:col-span-4 spotlight-card p-1 min-h-[160px] flex items-center justify-center relative group cursor-pointer overflow-hidden">
                 <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 to-purple-900/40"></div>
                 <div class="flex flex-col items-center justify-center z-10 text-center p-6">
@@ -461,10 +456,9 @@
     </div>
 </div>
 
-<!-- Horoscope Modal (修复手机显示问题) -->
+<!-- Horoscope Modal -->
 <div id="horoscope-modal" class="modal-view items-center justify-center p-4">
     <div class="modal-content rounded-3xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden relative bg-[#0a0a0a]">
-        <!-- 宇宙背景 -->
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')] bg-cover opacity-20"></div>
         <div class="flex justify-between items-center p-6 relative z-10 border-b border-white/10 flex-shrink-0">
             <h2 class="text-xl font-bold text-indigo-400">今日恋爱星运</h2>
@@ -506,30 +500,51 @@
     </div>
 </div>
 
-<!-- Novel Modal & Reader (AI 保留) -->
-<div id="novel-modal" class="modal-view items-center justify-center p-4">
-    <div class="modal-content rounded-3xl w-full max-w-6xl h-[90vh] flex flex-col relative">
-        <div class="flex justify-between items-center p-6 border-b border-white/10">
-            <h2 class="text-xl font-bold text-purple-400">Bookshelf</h2>
-            <div class="flex gap-3">
-                 <button onclick="generateBedtimeStory()" class="ai-btn-gradient px-4 py-1.5 rounded-full text-[10px] font-bold uppercase transition flex items-center gap-2"><i class="fas fa-moon"></i> AI 故事</button>
-                <button onclick="triggerNovelUpload()" class="btn-secondary px-4 py-1.5 rounded-full text-[10px] font-bold uppercase transition"><i class="fas fa-upload mr-2"></i> 上传 TXT</button>
-                <button onclick="closeNovelModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center"><i class="fas fa-times text-xs"></i></button>
-            </div>
+<!-- Photo Assistant Modal (新增功能: 拍照/上传 + AI 线稿 + 自动转文字) -->
+<div id="photo-modal" class="modal-view items-center justify-center p-4">
+    <div class="modal-content rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden relative bg-[#0a0a0a]">
+        <div class="absolute inset-0 bg-teal-500/5 pointer-events-none"></div>
+        <div class="flex justify-between items-center p-6 relative z-10 border-b border-white/10 flex-shrink-0">
+            <h2 class="text-xl font-bold text-teal-400">专属摄影师</h2>
+            <button onclick="closePhotoModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center"><i class="fas fa-times text-xs"></i></button>
         </div>
-        <div id="bookshelf" class="flex-grow p-8 overflow-y-auto grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6 bg-[#0a0a0a]"></div>
-        <input id="novel-file-upload" type="file" class="hidden" accept=".txt" onchange="handleNovelUpload(event)">
-    </div>
-</div>
-<div id="reader-modal" class="modal-view items-center justify-center p-0 bg-[#0a0a0a]">
-    <div id="flipbook-wrapper" class="flex items-center justify-center h-[90vh] w-full">
-        <div id="flipbook"></div>
-    </div>
-    <div class="absolute bottom-6 w-full flex justify-center gap-8 z-50">
-        <button id="reader-prev" class="text-white/30 hover:text-white transition"><i class="fas fa-arrow-left text-xl"></i></button>
-        <button onclick="saveBookmark()" id="bookmark-btn" class="text-yellow-500/50 hover:text-yellow-400 transition"><i class="fas fa-bookmark text-xl"></i></button>
-        <button onclick="closeReader()" class="text-white/30 hover:text-red-400 transition"><i class="fas fa-power-off text-xl"></i></button>
-        <button id="reader-next" class="text-white/30 hover:text-white transition"><i class="fas fa-arrow-right text-xl"></i></button>
+        <div class="flex-grow flex flex-col p-6 relative z-10 overflow-y-auto scrollbar-hide items-center">
+            
+            <!-- 上传/拍照区域 -->
+            <label for="scene-upload" class="w-full aspect-[4/3] rounded-xl border-2 border-dashed border-white/20 hover:border-teal-500/50 flex flex-col items-center justify-center cursor-pointer bg-white/5 transition mb-4 relative overflow-hidden group">
+                <img id="scene-preview" class="absolute inset-0 w-full h-full object-cover hidden opacity-50 group-hover:opacity-30 transition">
+                <div class="text-center z-10 pointer-events-none">
+                    <i class="fas fa-camera text-3xl text-gray-400 mb-2 group-hover:text-teal-400"></i>
+                    <p class="text-xs text-gray-400">点击拍照 / 上传场景图</p>
+                </div>
+            </label>
+            <input id="scene-upload" type="file" accept="image/*" capture="environment" class="hidden" onchange="handleSceneUpload(event)">
+
+            <!-- 生成按钮 -->
+            <button id="generate-comp-btn" onclick="generateComposition()" class="w-full ai-btn-gradient py-3 rounded-xl text-xs font-bold tracking-widest uppercase transition opacity-50 cursor-not-allowed flex items-center justify-center gap-2 mb-6" disabled>
+                <i class="fas fa-magic"></i> 生成拍摄指导
+            </button>
+
+            <!-- 结果展示 -->
+            <div id="comp-result-container" class="w-full hidden space-y-4">
+                <!-- 图片结果 (如果生成成功) -->
+                <div id="img-result-box" class="hidden">
+                    <p class="text-xs text-teal-400 mb-2 font-bold uppercase tracking-wider text-center">AI 建议构图 (线稿)</p>
+                    <div class="relative w-full rounded-xl overflow-hidden border border-teal-500/30">
+                        <img id="comp-result-img" class="w-full h-auto block" src="">
+                    </div>
+                </div>
+
+                <!-- 文字结果 (兜底或补充) -->
+                <div id="text-result-box" class="hidden bg-white/5 p-4 rounded-xl border border-white/10">
+                    <p class="text-xs text-teal-400 mb-2 font-bold uppercase tracking-wider flex items-center gap-2"><i class="fas fa-file-alt"></i> 构图详情</p>
+                    <div id="comp-text-content" class="text-gray-300 text-sm leading-relaxed font-serif whitespace-pre-line"></div>
+                </div>
+                
+                <p class="text-[10px] text-gray-500 mt-2 text-center">AI 建议仅供参考，重要的是捕捉爱意 ❤️</p>
+            </div>
+
+        </div>
     </div>
 </div>
 
@@ -556,16 +571,40 @@
     const k_part2 = "2MN4c9h3bfScBY";
     const apiKey = k_part1 + k_part2;
 
-    // --- Gemini AI Helper (强制中文输出 + 改进错误处理) ---
+    // --- Image Compression Helper ---
+    // 核心压缩函数：限制最大宽度为 800px，压缩质量 0.7
+    function resizeImage(file, maxWidth, quality, callback) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+                if (width > maxWidth) {
+                    height = Math.round(height * (maxWidth / width));
+                    width = maxWidth;
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                // 转换为 Base64
+                callback(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // --- Gemini AI Helper (General Text) ---
     async function callGemini(prompt) {
         if (!prompt) return null;
-        
-        // 检查 Key 是否存在 (针对上传后的情况)
         if (!apiKey && window.location.hostname !== 'localhost' && !window.location.hostname.includes('googleusercontent')) {
              alert("请在代码中配置您的 Gemini API Key 才能使用 AI 功能。");
              return null;
         }
-
+        
         const loading = document.getElementById('loading-layer');
         const loadingText = document.getElementById('loading-text');
         
@@ -577,6 +616,75 @@
             contents: [{ parts: [{ text: prompt }] }]
         };
 
+        // Retry logic for Quota Exceeded (429)
+        let attempt = 0;
+        const maxRetries = 5;
+        let delay = 1000; // 1s start
+
+        while (attempt < maxRetries) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.status === 429) {
+                    const errData = await response.json().catch(() => ({}));
+                    console.warn(`Attempt ${attempt+1} failed: Quota Exceeded. Retrying in ${delay}ms...`);
+                    throw new Error("QUOTA_EXCEEDED");
+                }
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error?.message || response.statusText);
+                }
+
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
+
+            } catch (error) {
+                if (error.message === "QUOTA_EXCEEDED") {
+                    attempt++;
+                    if (attempt >= maxRetries) {
+                        alert("AI 请求过于频繁，请稍后（约30秒）再试。");
+                        return null;
+                    }
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2; // Exponential backoff
+                } else {
+                    console.error("AI Error:", error);
+                    alert(`AI 连接失败: ${error.message}`);
+                    return null;
+                }
+            } finally {
+                if (attempt >= maxRetries || (attempt === 0 && loading.style.display !== 'none')) {
+                     // Ensure loading is hidden only on final success or failure
+                }
+            }
+        }
+        loading.style.display = 'none';
+        return null; 
+    }
+
+    // --- Gemini Text Analysis from Image (Fallback) ---
+    async function callGeminiTextAnalysis(base64Image) {
+        const loading = document.getElementById('loading-layer');
+        document.getElementById('loading-text').innerText = "生成文字指导中...";
+        loading.style.display = 'flex';
+
+        // 使用通用模型进行多模态分析 (识图 + 文本)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        
+        const payload = {
+            contents: [{
+                parts: [
+                    { text: "作为专业摄影师，请分析这张场景图，并给出极具操作性的构图指导。不要讲大道理，直接告诉我：\n1. **站位坐标**：把画面想象成九宫格，人物应该站在具体的哪个点（如“右上交点”、“左侧竖线中间”）？\n2. **相机机位**：需要仰拍、俯拍还是平视？距离人物多远？\n3. **姿势引导**：在这个具体场景下，人物应该做什么动作最自然？" },
+                    { inlineData: { mimeType: "image/jpeg", data: base64Image } }
+                ]
+            }]
+        };
+
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -584,21 +692,83 @@
                 body: JSON.stringify(payload)
             });
             
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error?.message || response.statusText);
-            }
-
+            if (!response.ok) throw new Error("Analysis failed");
             const data = await response.json();
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            return text ? text.trim() : null;
-        } catch (error) {
-            console.error("AI Error:", error);
-            alert(`连接星星失败: ${error.message}\n如果 API Key 为空，请记得去代码中填入。`);
-            return null;
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || "无法生成建议，请重试。";
+        } catch (e) {
+            console.error(e);
+            return "AI 开小差了，请稍后再试。";
         } finally {
             loading.style.display = 'none';
         }
+    }
+
+    // --- Gemini Vision Helper (For Photo Assistant) ---
+    async function callGeminiVision(base64Image) {
+        const loading = document.getElementById('loading-layer');
+        document.getElementById('loading-text').innerText = "AI 正在绘制线稿...";
+        loading.style.display = 'flex';
+        
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+        
+        const payload = {
+            contents: [
+                {
+                    parts: [
+                        { text: "作为摄影师，请在原图上画出构图辅助线（如九宫格、引导线）和一个简笔画小人来指示女朋友应该站的位置，用高对比度的线条。保留原图背景。" },
+                        { inlineData: { mimeType: "image/jpeg", data: base64Image } }
+                    ]
+                }
+            ],
+            generationConfig: {
+                responseModalities: ["TEXT", "IMAGE"] // Allow fallbacks
+            }
+        };
+
+        // Retry logic for Quota Exceeded (429)
+        let attempt = 0;
+        const maxRetries = 2; // Reduce retries to fail faster to text fallback
+        let delay = 1000;
+
+        while (attempt < maxRetries) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.status === 429) {
+                    console.warn(`Image Gen Attempt ${attempt+1} failed: Quota. Retrying...`);
+                    throw new Error("QUOTA_EXCEEDED");
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Check for image
+                const imgData = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                if (!imgData) {
+                    throw new Error("No image generated");
+                }
+                
+                return `data:image/jpeg;base64,${imgData}`;
+
+            } catch (error) {
+                if (error.message === "QUOTA_EXCEEDED") {
+                    attempt++;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2; 
+                } else {
+                    console.error("Image Gen Failed, switching to text fallback."); 
+                    return null; // Return null to trigger fallback
+                }
+            }
+        }
+        return null; // All retries failed
     }
 
     // --- 1. 锁屏与入场 ---
@@ -655,7 +825,6 @@
         fetchAndRenderPhotos();
         fetchAllNotes();
         fetchEvents();
-        fetchNovels();
         animateParticles();
     }
 
@@ -917,81 +1086,6 @@
             setTimeout(() => input.classList.remove('animate-pulse'), 1000);
         }
     }
-
-    // --- Novel (AI 保留) ---
-    let flipBook;
-    function openNovelModal() { toggleModal('novel-modal', true); fetchNovels(); }
-    function closeNovelModal() { toggleModal('novel-modal', false); }
-    function closeReader() { toggleModal('reader-modal', false); }
-    async function fetchNovels() {
-        const { data } = await _supabase.from('Novel').select('*');
-        if(data) {
-            animateValue(document.getElementById('novel-count'), 0, data.length, 1000);
-            document.getElementById('bookshelf').innerHTML = data.map(n => `
-                <div onclick="readNovel('${n.fileUrl}', '${n.id}')" class="group cursor-pointer">
-                    <div class="aspect-[2/3] bg-gray-800 rounded-lg overflow-hidden relative shadow-lg group-hover:-translate-y-2 transition duration-300">
-                        <div class="absolute inset-0 bg-gradient-to-br from-purple-900/40 to-black flex items-center justify-center">
-                            <i class="fas fa-book text-3xl text-white/20"></i>
-                        </div>
-                        <div class="absolute bottom-0 w-full p-2 bg-black/60 backdrop-blur text-center">
-                            <p class="text-xs text-gray-300 truncate">${n.title}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-    }
-    function triggerNovelUpload() { document.getElementById('novel-file-upload').click(); }
-    async function handleNovelUpload(e) {
-        const f = e.target.files[0]; if(!f) return;
-        const name = prompt("书名:", f.name.replace('.txt',''));
-        if(!name) return;
-        document.getElementById('loading-layer').style.display='flex';
-        const fname = `novel-${Date.now()}.txt`;
-        await _supabase.storage.from(STORAGE_BUCKET).upload(fname, f);
-        const {data:{publicUrl}} = _supabase.storage.from(STORAGE_BUCKET).getPublicUrl(fname);
-        await _supabase.from('Novel').insert([{title:name, fileUrl:publicUrl}]);
-        document.getElementById('loading-layer').style.display='none';
-        fetchNovels();
-    }
-    async function readNovel(url, id) {
-        document.getElementById('loading-layer').style.display='flex';
-        try {
-            const txt = await (await fetch(url)).text();
-            openReader(txt, id);
-        } catch(e) { alert("读取失败"); }
-        finally { document.getElementById('loading-layer').style.display='none'; }
-    }
-    
-    // ✨ AI Feature 2: Bedtime Story (Chinese)
-    async function generateBedtimeStory() {
-        const theme = prompt("今晚想听什么故事? (例如: 奇幻, 未来, 婚礼, 校园)");
-        if(!theme) return;
-        
-        const story = await callGemini(`用中文写一个浪漫的短篇故事(约300字)，关于一对叫"我们"的情侣。主题：${theme}。请先给出标题，然后分段写。`);
-        if(story) {
-            openReader(story, null); 
-        }
-    }
-
-    function openReader(txt, id) {
-        toggleModal('reader-modal', true);
-        const container = document.getElementById('flipbook');
-        container.innerHTML = '';
-        document.getElementById('bookmark-btn').style.display = id ? 'flex' : 'none';
-
-        const charsPerPage = window.innerWidth < 768 ? 200 : 400; // Adjusted for Chinese density
-        for(let i=0; i < txt.length; i+=charsPerPage) {
-            const pageContent = txt.substring(i, i+charsPerPage);
-            const page = document.createElement('div');
-            page.className = 'paper-page';
-            page.innerHTML = `<p class="novel-paragraph">${pageContent.replace(/\n/g, '<br>')}</p><div class="absolute bottom-4 left-0 w-full text-center text-[10px] text-gray-400">- ${Math.floor(i/charsPerPage)+1} -</div>`;
-            container.appendChild(page);
-        }
-        if(flipBook) flipBook.destroy();
-        flipBook = new St.PageFlip(container, { width: window.innerWidth<768?320:500, height: window.innerWidth<768?500:700, size: 'stretch', showCover:false });
-        flipBook.loadFromHTML(document.querySelectorAll('.paper-page'));
-    }
     
     // Food Spin (Original Chinese)
     const foods = ["火锅", "日料", "烧烤", "轻食", "泰国菜", "KFC", "炒菜", "喝粥", "宝宝的脸"];
@@ -1019,6 +1113,65 @@
             // 失败时在卡片上显示错误
             document.getElementById('horoscope-content').innerHTML = "<span class='text-red-400'>占卜失败。</span><br><span class='text-xs text-gray-500'>请检查 API Key 设置。</span>";
         }
+    }
+
+    // ✨ New AI Feature: Photo Assistant Logic (Auto Resize + Text Fallback)
+    let sceneBase64 = null;
+
+    function openPhotoModal() { toggleModal('photo-modal', true); }
+    function closePhotoModal() { toggleModal('photo-modal', false); }
+
+    function handleSceneUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // 使用压缩逻辑
+        resizeImage(file, 800, 0.7, (resizedBase64) => {
+             const preview = document.getElementById('scene-preview');
+             preview.src = resizedBase64;
+             preview.classList.remove('hidden');
+             
+             // Extract pure base64
+             sceneBase64 = resizedBase64.split(',')[1];
+             
+             const btn = document.getElementById('generate-comp-btn');
+             btn.disabled = false;
+             btn.classList.remove('opacity-50', 'cursor-not-allowed');
+             
+             // Hide previous results
+             document.getElementById('comp-result-container').classList.add('hidden');
+             document.getElementById('img-result-box').classList.add('hidden');
+             document.getElementById('text-result-box').classList.add('hidden');
+        });
+    }
+
+    async function generateComposition() {
+        if (!sceneBase64) return;
+        
+        const container = document.getElementById('comp-result-container');
+        container.classList.remove('hidden');
+        
+        // 1. Try Image Gen
+        const resultImgUrl = await callGeminiVision(sceneBase64);
+        
+        if (resultImgUrl) {
+            // If image success
+            const imgBox = document.getElementById('img-result-box');
+            const img = document.getElementById('comp-result-img');
+            img.src = resultImgUrl;
+            imgBox.classList.remove('hidden');
+        } else {
+            // 2. If Image fails (null), try text fallback
+            const textResult = await callGeminiTextAnalysis(sceneBase64);
+            const textBox = document.getElementById('text-result-box');
+            const textContent = document.getElementById('comp-text-content');
+            
+            textContent.innerHTML = textResult.replace(/\n/g, '<br>').replace(/\*\*/g, '');
+            textBox.classList.remove('hidden');
+        }
+        
+        // Scroll to result
+        container.scrollIntoView({ behavior: 'smooth' });
     }
 
     // Days Counter
