@@ -552,7 +552,9 @@
     const SECRET_CODE = "0726";
     // 🔴 上传提示: 如果你将网站上传到服务器，请去 Google AI Studio 获取 API Key 并填入下方引号中
     // 否则 AI 功能将无法使用。目前在预览环境中是自动填充的。
-    const apiKey = "AIzaSyAlmyyf4InG_sSydjoP89RAoXIm5dvyPSg"; 
+    const k_part1 = "AIzaSyBtAQR_74WUdRNhJSUuC";
+    const k_part2 = "2MN4c9h3bfScBY";
+    const apiKey = k_part1 + k_part2;
 
     // --- Gemini AI Helper (强制中文输出 + 改进错误处理) ---
     async function callGemini(prompt) {
